@@ -116,11 +116,61 @@ class MetadataController extends Controller {
                     }
                     break;
 
-                case 'image/tiff':
+                 case 'image/tiff':
                     if ($sections = $this->readExif($file)) {
-                        $sections['XMP'] = $this->readTiffXmpIptc($file);
-                        $metadata = $this->getImageMetadata($sections, $lat, $lon, $loc);
-//                        $this->dump($sections, $metadata);
+			$sections['C'] = ['html'=>$sections['COMPUTED']['html'],
+					   'IsColor'=>$sections['COMPUTED']['IsColor'],
+					   'ByteOrderMotorola'=>$sections['COMPUTED']['ByteOrderMotorola'],
+					   ] ;
+			$sections['COMPUTED'] = [];
+            $sections['ColorMap'] = implode(', ', $sections['ColorMap']);
+            $sections[' '] =[ 'DP_APERTURE' => substr(strstr($sections['UndefinedTag:0x8546'], 'Aperture No'), 0,17),
+            'DP_STAGE_INIT' => substr(strstr($sections['UndefinedTag:0x8546'], 'Stage Initialised'), 0,24),
+            'DP_DETECTOR_CHANNEL' => substr(strstr($sections['UndefinedTag:0x8546'], 'DP_DETECTOR_CHANNEL'), 20,20),
+            'DP_IMAGE_STORE' => substr(strstr($sections['UndefinedTag:0x8546'], 'Store resolution'), 0,29),
+            'DP_TILTED' => substr(strstr($sections['UndefinedTag:0x8546'], 'Stage Tilted'), 0,19),
+            'DP_TILT_CORRECTION' => substr(strstr($sections['UndefinedTag:0x8546'], 'Tilt Corrn.'), 0,19),
+            'DP_SCM_RANGE' => substr(strstr($sections['UndefinedTag:0x8546'], 'SCM range'), 0,22),
+            'DP_NOISE_REDUCTION' => substr(strstr($sections['UndefinedTag:0x8546'], 'Noise Reduction'), 0,22),
+            'AP_C3' => substr(strstr($sections['UndefinedTag:0x8546'], 'C3 Lens I'), 0,21),
+            'AP_WD' => substr(strstr($sections['UndefinedTag:0x8546'], 'EP Target'), 28,17),
+            'AP_MAG' => substr(stristr($sections['UndefinedTag:0x8546'], 'AP_FIB_SHIFT_CORRECTION_Y'), 68,18),
+            'AP_BRIGHTNESS' => substr(stristr($sections['UndefinedTag:0x8546'], 'Brightness'), 12,25),
+            'AP_CONTRAST' => substr(stristr($sections['UndefinedTag:0x8546'], 'AP_AR_V_INT_ACTUAL'), 57,21),
+            'AP_MANUALKV' => substr(stristr($sections['UndefinedTag:0x8546'], 'EHT Target'), 0,22),
+            'AP_STIG_X' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stigmation X'), 0,24),
+            'AP_STIG_Y' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stigmation Y'), 0,24),
+            'AP_STAGE_GOTO_Z' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage goto Z'), 0,24),
+            'AP_STAGE_GOTO_Y' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage goto Y'), 0,24),
+            'AP_STAGE_GOTO_X' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage goto X'), 0,24),
+            'AP_PIXEL_SIZE' => substr(stristr($sections['UndefinedTag:0x8546'], 'Pixel Size'), 0,21),
+            'AP_COLUMN_VAC' => substr(stristr($sections['UndefinedTag:0x8546'], 'Gun Vacuum'), 0,28),
+            'AP_SYSTEM_VAC' => substr(stristr($sections['UndefinedTag:0x8546'], 'System Vacuum'), 0,30),
+            'AP_STAGE_LOW_Z' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage low Z'), 0,25),
+            'AP_STAGE_LOW_Y' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage low Y'), 0,25),
+            'AP_STAGE_LOW_X' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage low X'), 0,25),
+            'AP_STAGE_HIGH_Z' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage high Z'), 0,25),
+            'AP_STAGE_HIGH_Y' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage high Y'), 0,25),
+            'AP_STAGE_HIGH_X' => substr(stristr($sections['UndefinedTag:0x8546'], 'Stage high X'), 0,25),
+            'AP_PHOTO_NUMBER' => substr(stristr($sections['UndefinedTag:0x8546'], 'Photo No.'), 0,20),
+            'AP_BEAM_TIME' => substr(stristr($sections['UndefinedTag:0x8546'], 'Beam Time'), 0,26),
+            'AP_EXTCURRENT' => substr(stristr($sections['UndefinedTag:0x8546'], 'Extractor I'), 0,20),
+            'AP_ACTUALCURRENT' => substr(stristr($sections['UndefinedTag:0x8546'], 'Fil I'), 0,20),
+            'AP_ACTUALKV' => substr(stristr($sections['UndefinedTag:0x8546'], 'EHT'), 10,20),
+            'SV_VERSION' => substr(stristr($sections['UndefinedTag:0x8546'], 'Version'),9,18),
+            'SV_SERIAL_NUMBER' => substr(stristr($sections['UndefinedTag:0x8546'], 'Serial No.'), 0,20),
+            'SV_USER_TEXT' => substr(stristr($sections['UndefinedTag:0x8546'], 'User Text'),10,1),
+            'SV_OPERATOR' => substr(stristr($sections['UndefinedTag:0x8546'], 'Operator'), 10,10),
+            'SV_USER_NAME' => substr(stristr($sections['UndefinedTag:0x8546'], 'User Name'), 10,8),
+            'SV_FILE_NAME' => substr(stristr($sections['UndefinedTag:0x8546'], 'File Name'), 10,22),
+            'SV_IMAGE_PATH' => substr(stristr($sections['UndefinedTag:0x8546'], 'Images'), 0,38),
+
+            ];
+ //             $sections['XMP'] = $this->readTiffXmpIptc($file);
+                $sections['UndefinedTag:0x8546'] = [];
+
+                $metadata = $this->getImageMetadata($sections, $lat, $lon, $loc);
+                $this->dump($sections, $metadata);
                     }
                     break;
 
