@@ -22,3 +22,6 @@ Support for other formats may be implemented in future releases (feel free to ma
 ## Requirements
 * PHP 5.6 or later (tested with 7.0, 7.1)
 * EXIF support for PHP (if `php --ri exif` returns `Extension 'exif' not present`, you might need to install an appropriate package for your system, e.g. by running `pkg install php71-exif` on FreeBSD/NAS4Free)
+
+## For SEM interest people
+With this "custom" app you are able to retrieve metadata from .tif/.tiff images including instrument metadata. 
